@@ -1,165 +1,111 @@
 <?php
-require('top.php');
-include_once('function.inc.php'); 
+$msg='';
+require('top.inc.php');
+if(isset($_GET['type']) && $_GET['type']!=''){
+   $type=get_safe_value($conn,$_GET['type']);
+   if($type=='status'){
+      $operation=get_safe_value($conn,$_GET['operation']);
+      $id=get_safe_value($conn,$_GET['id']); 
+      if($operation=='active'){
+         $status='1';
 
-
-
- // Validate and sanitize product ID
-if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $product_id = mysqli_real_escape_string($conn, $_GET['id']);
-    $get_product = get_product($conn, '', '', $product_id);
-} else {
-    echo "<script>window.location.href='index.php';</script>";
-    die();
+      }else{
+         $status='0';
+      }
+      $update_status_sql="update product set status='$status' where id='$id'";
+      mysqli_query($conn,$update_status_sql);
+   }
+    if($type=='delete'){
+      $id=get_safe_value($conn,$_GET['id']); 
+      $delete_sql="delete from product where id='$id'";
+      mysqli_query($conn,$delete_sql);
+   }
 }
+$sql = "SELECT product.*, categories.categories 
+        FROM product, categories 
+        WHERE product.categories_id = categories.id 
+        ORDER BY product.id DESC";
+
+$res = mysqli_query($conn, $sql);
+
 ?>
-
-  <!-- Start Bradcaump area -->
-       <div class="ht__bradcaump__area">
-    <div class="ht__bradcaump__wrap">
-      
-            <div class="row align-items-center"> <!-- flex vertical align center -->
-                <div class="col-xs-12 col-sm-6 col-md-6">
-                    <!-- Image on left -->
-                    <div class="bg-image">
-                        <img src="images/bg/6.jpeg" alt="Banner Image">
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6">
-                    <!-- Breadcrumb on right -->
-                    <div class="bradcaump__inner">
-                        <nav class="bradcaump-inner">
-                           <a class="breadcrumb-item" href="index.php">Home</a>
-                            <span class="brd-separetor"><i class="zmdi zmdi-chevron-right"></i></span>
-                            <a class="breadcrumb-item" href="categories.php?id=<?php echo $get_product[0]['categories_id'];?>"> 
-                                <?php echo $get_product[0]['categories']; ?>
-                            </a>
-                            <span class="brd-separetor"><i class="zmdi zmdi-chevron-right"></i></span>
-                            <span class="breadcrumb-item active">
-                                <?php echo $get_product[0]['name']; ?>
-                            </span>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-       
-    </div>
-</div>
-
-        <!-- End Bradcaump area -->
-       
-  
-
-        <!-- Start Product Details Area -->
-        <section class="htc__product__details bg__white ptb--100">
-            <!-- Start Product Details Top -->
-            <div class="htc__product__details__top">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12">
-                            <div class="htc__product__details__tab__content">
-                                <!-- Start Product Big Images -->
-                                <div class="product__big__images">
-                                    <div class="portfolio-full-image tab-content">
-                                        <div role="tabpanel" class="tab-pane fade in active" id="img-tab-1">
-                                           <img src="media/product/<?php echo htmlspecialchars($get_product[0]['image']); ?>" alt="product image">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Product Big Images -->
-                                
-                            </div>
+<div class="content pb-0">
+    <div class="orders">
+         <div class="row">
+             <div class="col-xl-12">
+                 <div class="card">
+                     <div class="card-body">
+                         <h4 class="box-title">Products </h4>
                         </div>
-                        <div class="col-md-7 col-lg-7 col-sm-12 col-xs-12 smt-40 xmt-40">
-                            <div class="ht__product__dtl">
-                                <h2><?php echo $get_product['0'] ['name']?> </h2>
-                                <ul  class="pro__prize">
-                                    <li class="old__prize"><?php echo $get_product['0']['mrp']?></li>
-                                    <li><?php echo $get_product['0']['price']?></li>
-                                </ul>
-                                <p class="pro__info"><?php echo $get_product['0']['short_desc']?> </p>
-                                <div class="ht__pro__desc">
-                                    <div class="sin__desc">
-                                        <p><span>Availability:</span> In Stock</p>
-                                    </div>
-                                     <div class="sin__desc">
-                                        <p><span>Qty:</span>
-                                       <select id="qty">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                            <option value="9">9</option>
-                                            <option value="10">10</option>
-                                        </select>
-                                    </p>
-                                    </div>
-                                    <div class="sin__desc align--left">
-                                        <p><span>Categories:</span></p>
-                                        <ul class="pro__cat__list">
-                                            
-                                            <li><a href="categories.php?id=<?php echo $get_product[0] ['categories_id'];?>"><?php echo $get_product['0']['categories']?> </a></li>
+                        <div class="card-body--">
+                           <div class="table-stats order-table ov-h">
+                              <table class="table ">
+                                 <thead>
+                                    <tr>
+                                       <th class="serial">#</th>
+                                       <th>ID</th>
+                                       <th>Categories</th>
+                                       <th>Name</th>
+                                       <th>Image</th>
+                                       <th>Mrp</th>
+                                       <th>Price</th>
+                                       <th>Quantity</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <?php
+                                    $i=1;
+                                     while ($row=mysqli_fetch_assoc($res)) {?>
+                                    <tr>
+                                        <td class="serial"><?php echo $i?></td>
+                                        <td><?php echo $row['id']?></td>
+                                        <td><?php echo $row['categories']?></td>
+                                        <td><?php echo $row['name']?></td>
+                                        <td><img src="../Media/product/<?php echo $row['image']; ?>" alt="<?php echo $row['name']; ?>"/></td>
+                                        <td><?php echo $row['mrp']?></td>
+                                        <td><?php echo $row['price']?></td>
+                                        <td class="text-center"><?php echo $row['qty']; ?></td>
 
-                                        </ul>
-                                    </div>
-                                     <a class="fr__btn" href="javascript:void(0)" onclick="manage_cart('<?php echo $get_product[0]['id']?>','add')">Add to cart</a>
-                              
-                                    </div>
+                                        <td><?php 
+                                        if($row['status']==1){
+                                          echo "<span class='badge badge-complete'><a href='?type=status&operation=deactive&id=".$row['id']."'>ACTIVE</a></span> &nbsp";
+                                        }else{
+                                          echo "<span class='badge badge-pending'><a href='?type=status&operation=active&id=".$row['id']."'>DEACTIVE</a> </span> &nbsp";
+                                        }
+                                        echo "<span class='badge badge-edit'> <a href='manage_product.php?type=edit&id=".$row['id']."'>Edit</a></span> &nbsp";
+                                        echo "<span class='badge badge-delete'><a href='?type=delete&id=".$row['id']."'>DELETE</a></span> &nbsp";
+                                        
+                                        ?>
+                                         </td>
+                                    </tr>
+                                    <?php
+                                     $i++;
+                                  } ?>
+                                    
                                    
-                                 
-                                </div>
-                            </div>
+                                   
+                                   
+                                   
+                                 </tbody>
+                              </table>
+                              <?php if($msg != ""){ ?>
+   <div style="margin-top:10px; font-weight:bold; color:green;">
+      <?php echo $msg; ?>
+   </div>
+<?php } ?>
+                               
+                           </div>
                            
-
-                            
-
                         </div>
-                    </div>
-                     
-                </div>
-                 
+                     </div>
+                  </div>
+               </div>
             </div>
-            <!-- End Product Details Top -->
-        </section>
-        <!-- End Product Details Area -->
-          <!-- Start Product Description -->
-        <section class="htc__produc__decription bg__white">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <!-- Start List And Grid View -->
-                        <ul class="pro__details__tab" role="tablist">
-                            <li role="presentation" class="description active"><a href="#description" role="tab" data-toggle="tab">description</a></li>
-                        </ul>
-                        <!-- End List And Grid View -->
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div class="ht__pro__details__content">
-                            <!-- Start Single Content -->
-                            <div role="tabpanel" id="description" class="pro__single__content tab-pane fade in active">
-                                <div class="pro__tab__content__inner">
-                                         <p class="pro__info"><?php echo $get_product['0']['description']?> </p>
-                                </div>
-                            </div>
-                            <!-- End Single Content -->
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- End Product Description -->
+            <h4 class="box-link"><a href="manage_product.php">Add Products</a>  </h4>
+		  </div>
+       
 
-
-
-
-
-
-<?php require('footer.php'); ?>
+<?php
+require('footer.inc.php');
+?>
+        

@@ -1,6 +1,6 @@
 <?php
 //Start session
-
+session_start();
 define('SITEURL', 'http://localhost:808/ppp/');
 define('LOCALHOST', 'localhost');
 define('DB_USERNAME','root');

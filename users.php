@@ -5,13 +5,13 @@ if(isset($_GET['type']) && $_GET['type']!=''){
    if($type=='delete'){
       $id=get_safe_value($conn,$_GET['id']); 
     
-      $delete_sql= "delete from contact_us where id='$id'";
+      $delete_sql= "delete from users where id='$id'";
 
       mysqli_query($conn,$delete_sql);
    }
     
 }
-$sql = "SELECT * FROM contact_us order by id desc";
+$sql = "SELECT * FROM users order by id desc";
 $res = mysqli_query($conn, $sql);
 
 ?>
@@ -21,7 +21,7 @@ $res = mysqli_query($conn, $sql);
              <div class="col-xl-12">
                  <div class="card">
                      <div class="card-body">
-                         <h4 class="box-title">Contact Us </h4>
+                         <h4 class="box-title">Users</h4>
                         </div>
                         <div class="card-body--">
                            <div class="table-stats order-table ov-h">
@@ -33,7 +33,6 @@ $res = mysqli_query($conn, $sql);
                                        <th>Name</th>
                                        <th>Email</th>
                                        <th>Mobile</th>
-                                       <th>Query</th>
                                        <th>Date</th>
                                         
                                        <th></th>
@@ -49,7 +48,6 @@ $res = mysqli_query($conn, $sql);
                                         <td><?php echo $row['name']?></td>
                                         <td><?php echo $row['email']?></td>
                                         <td><?php echo $row['mobile']?></td>
-                                        <td><?php echo $row['comment']?></td>
                                         <td><?php echo $row['added_on']?></td>
                                         <td><?php 
                                        
